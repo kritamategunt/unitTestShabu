@@ -1,24 +1,25 @@
-export function bufferDiscount(qty: number, pricePerHead: number) {
+import axios from "axios";
+
+export async function bufferDiscount(qty: number) {
+  const serviceShabu = await axios.get("/discountBuffer");
   let result;
-  let getDiscount: number = 0;
-  let serviceChange = 10 / 100;
+  let serviceChange = serviceShabu.data.data.serviceChange;
+  let pricePerHead  = serviceShabu.data.data.price;
+
   let discountTime = qty;
   let net = pricePerHead * serviceChange;
-  let total = 0
+  let total;
   if (qty % 4 == 0) {
-    getDiscount++;
     discountTime = qty / 4;
-    total = (pricePerHead + net) * (qty-discountTime);
-  }else{
-    total = (pricePerHead + net) * qty;
+    total = (pricePerHead + net/100) * (qty - discountTime);
+  } else {
+    total = (pricePerHead + net/100) * qty;
   }
-  //qty = qty - getDiscount;
 
-  result = { status: 200, result: total ,netPerHead: pricePerHead+net,};
+  result = total
   console.log(result);
   return result;
 }
-
 
 // ## Shabu buffet
 
@@ -35,4 +36,3 @@ export function bufferDiscount(qty: number, pricePerHead: number) {
 // |      7 | 2,618 |
 // |      8 | 2,244 |
 // @kritamategunt
- 
